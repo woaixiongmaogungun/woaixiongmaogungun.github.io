@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>五年级数学</title>
+        <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+        <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    </head>
+    <body>
+        <py-script>
+            def factor():
+                q1 = int(input('请输入一个非0的正整数'))
+                number = []
+                if q1 % 1 == 0 and q1 != 0:
+                    for a in range(q1 + 1):
+                        for b in range(q1 + 1):
+                            if a * b == q1:
+                                number.append(a)
+                else:
+                    print('请输入一个非0的正整数!!!')
+                if len(number) > 2:
+                    print(f'{q1}的因数有{number},它是合数')
+                elif len == 2:
+                    print(f'{q1}的因数有{number},它是质数')
+                else:
+                    print(f'{q1}的因数有{number},它既不是质数,也不是合数')
+
+            def multiple():
+                q2 = int(input('请输入一个非0的正整数'))
+                w = int(input('所需的倍数个数'))
+                number2 = []
+                if q2 % 1 == 0 and q2 != 0:
+                    for b in range(1 , w + 1):
+                        number2.append(q2 * b)
+                else:
+                    print('请输入一个非0的正整数!!!')
+                print(f'{q2}的倍数有{number2}')
+
+            def edge1():
+                a = int(input('长?'))
+                b = int(input('宽?'))
+                h = int(input('高?'))
+                edge = a * 4 + b * 4 + h * 4
+                print(f'它的棱长总和是{edge}')
+
+            def surface1():
+                a = int(input('长?'))
+                b = int(input('宽?'))
+                h = int(input('高?'))
+                surface = ( a * b + a * h + b * h ) * 2
+                print(f'它的表面积是{surface}')
+
+            def volume1():
+                a = int(input('长?'))
+                b = int(input('宽?'))
+                h = int(input('高?'))
+                volume = a * b * h
+                print(f'它的体积是{volume}')
+
+            def volume11():
+                S = int(input('底面积?'))
+                h = int(input('高?'))
+                volume = S * h
+                print(f'它的体积是{volume}')
+
+            def edge2():
+                a1 = int(input('棱长?'))
+                edge = a1 * 12
+                print(f'它的棱长总和是{edge}')
+
+            def surface2():
+                a1 = int(input('棱长?'))
+                surface = a1 ** 2 * 6
+                print(f'它的表面积是{surface}')
+
+            def volume2():
+                a1 = int(input('棱长?'))
+                volume = a1 ** 3
+                print(f'它的体积是{volume}')
+
+            def tstx():
+                n = int(input('棱数?'))
+                q = n ** 3
+                w = 8
+                e = 12 * (n - 2)
+                a = 6 * (n - 2) ** 2
+                s = (n - 2) ** 3
+                print(f'总个数有{q}')
+                print(f'3面涂色的个数有{w}')
+                print(f'2面涂色的个数有{e}')
+                print(f'1面涂色的个数有{a}')
+                print(f'0面涂色的个数有{s}')
+
+            def gcd():
+                q1 = int(input('请输入一个非0的正整数'))
+                q2 = int(input('请输入一个非0的正整数'))
+                number1 = []
+                number2 = []
+
+                if q1 % 1 == 0 and q1 != 0:
+                    for a in range(q1 + 1):
+                        for b in range(q1 + 1):
+                            if a * b == q1:
+                                number1.append(a)
+                if q2 % 1 == 0 and q2 != 0:
+                    for c in range(q2 + 1):
+                        for d in range(q2 + 1):
+                            if c * d == q2:
+                                number2.append(c)
+                for x in number1[::-1]:
+                    if x in number2:
+                        print(f'{q1}和{q2}的最大公因数是{x}')
+                        break
+
+            def lcm():
+                q1 = int(input('请输入一个非0的正整数'))
+                q2 = int(input('请输入一个非0的正整数'))
+                number1 = []
+                number2 = []
+                if q1 % 1 == 0 and q1 != 0:
+                    for a in range(q1 + 1):
+                        for b in range(q1 + 1):
+                            if a * b == q1:
+                                number1.append(a)
+                if q2 % 1 == 0 and q2 != 0:
+                    for c in range(q2 + 1):
+                        for d in range(q2 + 1):
+                            if c * d == q2:
+                                number2.append(c)
+                for x in number1[::-1]:
+                    if x in number2:
+                        break
+                e = q1 * q2 // x
+                print(f'{q1}和{q2}的最小公倍数是{e}')
+
+            def zytzzk():
+                people = int(input('人数?'))
+                qtim = int(input('每人分钟?'))
+                a = 0
+                for i in range(people):
+                    a = 2 ** i - 1
+                    if a >= people:
+                        print('通知的最短时间是' + str(i * qtim) + '分钟')
+                        break
+
+            print('欢迎来到数学书')
+            print('1因数 2倍数 (长方体)3棱长总和 4表面积 5体积 6[底面积]体积 (正方体)7棱长总和 8表面积 9体积 10探索图形 11最大公因数 12最小公倍数\n13怎样通话最快')
+            a = int(input())
+            if a == 1:
+                factor()
+            elif a == 2:
+                multiple()
+            elif a == 3:
+                edge1()
+            elif a == 4:
+                surface1()
+            elif a == 5:
+                volume1()
+            elif a == 6:
+                volume11()
+            elif a == 7:
+                edge2()
+            elif a == 8:
+                surface2()
+            elif a == 9:
+                volume2()
+            elif a == 10:
+                tstx()
+            elif a == 11:
+                gcd()
+            elif a == 12:
+                lcm()
+            elif a == 13:
+                zytzzk()
+        </py-script>
+    </body>
+</html>
