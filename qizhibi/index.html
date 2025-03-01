@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>启知银行 - 智慧金融平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* 重置与基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+
+        /* 容器系统 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* 品牌头图 */
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 信息卡片 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 6px 30px rgba(7, 89, 133, 0.06);
+            border: 1px solid rgba(163, 213, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #1d4ed8;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .card h2::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 1.2em;
+            background: #60a5fa;
+            border-radius: 2px;
+        }
+
+        /* 列表系统 */
+        .styled-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .styled-list li {
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            background: #f0f9ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .styled-list li::before {
+            content: "✓";
+            color: #2563eb;
+            margin-right: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .logo {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        < img src="images/logo.png" alt="启知银行" class="logo">
+        <ul>
+            <li>首页</li>
+            <li>利率说明</li>
+            <li>兑换服务</li>
+            <li>礼品兑换</li>
+            <li>登录/注册</li>
+        </ul>
+    </nav>
+
+    <!-- 首页横幅 -->
+    <section id="home" class="banner">
+        <div class="banner-content">
+            <h1>启知币智慧金融平台</h1>
+            <p>活期利率2% | 定期最高5% | 便捷兑换服务</p >
+            <div class="stats">
+                <div>
+                    <span class="count">1,234,567</span>
+                    <p>已发行启知币</p >
+                </div>
+                <div>
+                    <span class="count">89</span>
+                    <p>合作机构</p >
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 利率说明 -->
+    <section id="rates" class="section">
+        <h2>存款利率表</h2>
+        <div class="rate-cards">
+            <div class="card">
+                <h3>活期存款</h3>
+                <p class="rate">2.00%</p >
+                <p>随时存取 灵活方便</p >
+            </div>
+            <!-- 其他利率卡片 -->
+        </div>
+    </section>
+
+    <!-- 兑换服务 -->
+    <section id="exchange" class="section dark">
+        <h2>货币兑换</h2>
+        <div class="exchange-table">
+            <table>
+                <tr>
+                    <th>货币对</th>
+                    <th>汇率</th>
+                    <th>操作</th>
+                </tr>
+                <!-- 汇率数据 -->
+            </table>
+        </div>
+    </section>
+
+    <!-- 礼品兑换 -->
+    <section id="gifts" class="section">
+        <h2>礼品兑换</h2>
+        <div class="gift-grid">
+            <div class="gift-item">
+                < img src="images/gift-1.png" alt="文具套装">
+                <h3>精品文具套装</h3>
+                <p>500 启知币</p >
+                <button class="btn">立即兑换</button>
+            </div>
+            <!-- 其他礼品 -->
+        </div>
+    </section>
+<header class="hero">
+        <h1 style="color: #1e40af; margin-bottom: 0.5rem;">启知币服务中心</h1>
+        <p style="color: #64748b;">知识社区专用积分系统</p >
+    </header>
+
+    <div class="container">
+        <!-- 核心功能卡片 -->
+        <section class="card">
+            <h2>启知币用途</h2>
+            <ul class="styled-list">
+                <li>兑换小礼品</li>
+                <li>......</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>获取方式</h2>
+            <ul class="styled-list">
+                <li>上课(默写)</li>
+                <li>用玩具兑换</li>
+                <li>......</li>
+            </ul>
+        </section>
+    </div>
+    <footer>
+        <p>© 2023 启知银行 京ICP备12345678号</p >
+        <p>客服热线：400-888-8888</p >
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
