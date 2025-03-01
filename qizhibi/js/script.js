@@ -17,7 +17,7 @@ const rates = [
     { period: "2周", rate: 3.5 },
     { period: "1月", rate: 4.0 },
     { period: "半年", rate: 5.0 },
-    { period: "--", rate: -- }
+    { period: "--", rate: 100.0 }
 ];
 
 // 初始化利率卡片
