@@ -13,11 +13,11 @@ $('.count').each(function() {
 
 // 利率数据（示例）
 const rates = [
-    { period: "活期", rate: 2.0 },
     { period: "1周", rate: 3.0 },
     { period: "2周", rate: 3.5 },
     { period: "1月", rate: 4.0 },
-    { period: "半年", rate: 5.0 }
+    { period: "半年", rate: 5.0 },
+    { period: "--", rate: -- }
 ];
 
 // 初始化利率卡片
