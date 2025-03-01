@@ -25,7 +25,7 @@ rates.forEach(rate => {
         <div class="card">
             <h3>${rate.period}定期</h3>
             <p class="rate">${rate.rate.toFixed(2)}%</p >
-            <p>${getRateDesc(rate.period)}</p >
+            <p>利息更高</p >
         </div>
     `);
 });
