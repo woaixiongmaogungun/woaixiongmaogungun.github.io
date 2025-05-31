@@ -1,0 +1,638 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♻️ 垃圾分类指南 - 环保助手</title>
+    <style>
+
+        /* 固定在左上角的切换按钮样式 */
+        .switch-btn {
+            position: fixed; /* 固定定位 */
+            top: 0; /* 距离顶部0像素 */
+            left: 0; /* 距离左侧0像素 */
+            padding: 10px 15px;
+            background-color: #4CAF50; /* 绿色背景 */
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1000; /* 确保按钮在最上层 */
+            font-size: 16px;
+        }
+
+            .switch-btn:hover {
+                background-color: #45a049; /* 悬停效果 */
+            }
+
+        :root {
+            --recyclable: #4CAF50;
+            --harmful: #F44336;
+            --wet: #FF9800;
+            --dry: #9E9E9E;
+            --primary: #2E7D32;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f9f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #66BB6A);
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+            #search-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+                outline: none;
+            }
+
+        #search-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+            #search-button:hover {
+                background: #1B5E20;
+                transform: translateY(-2px);
+            }
+
+        .bins-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .bin {
+            background: white;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.4s;
+            cursor: pointer;
+            border-top: 5px solid;
+        }
+
+            .bin:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+            }
+
+            .bin.recyclable {
+                border-color: var(--recyclable);
+            }
+
+            .bin.harmful {
+                border-color: var(--harmful);
+            }
+
+            .bin.wet {
+                border-color: var(--wet);
+            }
+
+            .bin.dry {
+                border-color: var(--dry);
+            }
+
+        .emoji-bin {
+            font-size: 4.5rem;
+            margin: 15px 0;
+            transition: transform 0.3s;
+        }
+
+        .bin:hover .emoji-bin {
+            transform: scale(1.1);
+        }
+
+        .bin h3 {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        .bin p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .result-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            min-height: 300px;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+            .result-header .emoji {
+                font-size: 2.5rem;
+            }
+
+            .result-header h2 {
+                font-size: 1.8rem;
+                color: var(--primary);
+            }
+
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .item-card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            border-left: 4px solid;
+        }
+
+            .item-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.06);
+            }
+
+            .item-card.recyclable {
+                border-color: var(--recyclable);
+            }
+
+            .item-card.harmful {
+                border-color: var(--harmful);
+            }
+
+            .item-card.wet {
+                border-color: var(--wet);
+            }
+
+            .item-card.dry {
+                border-color: var(--dry);
+            }
+
+        .item-emoji {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .item-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .tips {
+            background: #E8F5E9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid var(--primary);
+        }
+
+            .tips h3 {
+                color: var(--primary);
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #777;
+        }
+
+            .empty-state .emoji {
+                font-size: 5rem;
+                margin-bottom: 20px;
+                opacity: 0.3;
+            }
+
+            .empty-state p {
+                font-size: 1.2rem;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+            }
+
+            #search-button {
+                padding: 15px;
+            }
+
+            .bins-section {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>♻️ 垃圾分类指南 🌍</h1>
+            <p class="subtitle">通过表情包和字符快速查找垃圾分类信息，保护环境从我做起！</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="输入垃圾名称（例如：电池、奶茶杯）">
+                <button id="search-button">🔍 搜索分类</button>
+            </div>
+        </section>
+
+        <section class="bins-section">
+            <div class="bin recyclable" data-type="recyclable">
+                <div class="emoji-bin">♻️</div>
+                <h3>可回收物</h3>
+                <p>适宜回收利用的生活废弃物</p>
+            </div>
+
+            <div class="bin harmful" data-type="harmful">
+                <div class="emoji-bin">☣️</div>
+                <h3>有害垃圾</h3>
+                <p>对人体健康或自然环境造成直接危害</p>
+            </div>
+
+            <div class="bin wet" data-type="wet">
+                <div class="emoji-bin">🍌</div>
+                <h3>厨余垃圾</h3>
+                <p>易腐的生物质生活废弃物</p>
+            </div>
+
+            <div class="bin dry" data-type="dry">
+                <div class="emoji-bin">🗑️</div>
+                <h3>其他垃圾</h3>
+                <p>除上述外的其他生活废弃物</p>
+            </div>
+        </section>
+
+        <section class="result-section">
+            <div id="result-content">
+                <div class="empty-state">
+                    <div class="emoji">🔍</div>
+                    <p>在搜索框中输入垃圾名称或点击上方分类垃圾桶查看详细信息</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>♻️ 环保垃圾分类指南 - 共建绿色地球 🌱</p>
+    </footer>
+
+    <script>
+        // 垃圾分类数据库
+        const garbageDB = {
+            "电池": { type: "harmful", emoji: "🔋", tips: "请勿挤压！投至红色有害垃圾桶" },
+            "奶茶杯": { type: "dry", emoji: "🥤", tips: "倒尽残余液体→吸管扔干垃圾→杯子扔可回收物" },
+            "塑料瓶": { type: "recyclable", emoji: "🧴", tips: "清空内容物→压扁瓶身→投入可回收物桶" },
+            "果皮": { type: "wet", emoji: "🍌", tips: "直接投入厨余垃圾桶，避免混入塑料袋" },
+            "废纸": { type: "recyclable", emoji: "📄", tips: "保持干燥清洁，投入蓝色可回收桶" },
+            "过期药品": { type: "harmful", emoji: "💊", tips: "连同包装一起投至有害垃圾桶" },
+            "剩饭剩菜": { type: "wet", emoji: "🍚", tips: "沥干水分后投入厨余垃圾桶" },
+            "玻璃瓶": { type: "recyclable", emoji: "🍾", tips: "清空内容物→冲洗干净→投入可回收物桶" },
+            "旧衣服": { type: "recyclable", emoji: "👕", tips: "清洗干净后投入可回收物桶或捐赠箱" },
+            "尿布": { type: "dry", emoji: "🧷", tips: "直接投入干垃圾桶，无需冲洗" },
+            "骨头": { type: "wet", emoji: "🦴", tips: "小骨头属于厨余垃圾，大骨头属于干垃圾" },
+            "烟头": { type: "dry", emoji: "🚬", tips: "确保完全熄灭后投入干垃圾桶" },
+            "易拉罐": { type: "recyclable", emoji: "🥫", tips: "清空内容物→压扁罐身→投入可回收桶" },
+            "灯泡": { type: "harmful", emoji: "💡", tips: "放入原包装或包裹后投至有害垃圾桶" },
+            "餐巾纸": { type: "dry", emoji: "🧻", tips: "无论是否污染都投入干垃圾桶" },
+            "茶叶渣": { type: "wet", emoji: "🍃", tips: "直接投入厨余垃圾桶，茶包属于干垃圾" },
+            "旧手机": { type: "recyclable", emoji: "📱", tips: "投至电子废弃物回收点或可回收桶" },
+            "油漆桶": { type: "harmful", emoji: "🎨", tips: "完全干燥后密封投入有害垃圾桶" },
+            "花卉": { type: "wet", emoji: "💐", tips: "直接投入厨余垃圾桶" },
+            "一次性餐具": { type: "dry", emoji: "🥢", tips: "无论材质都投入干垃圾桶" }
+        };
+
+        // 按分类组织的示例数据
+        const categoryExamples = {
+            "recyclable": [
+                { name: "塑料瓶", emoji: "🧴" },
+                { name: "废纸", emoji: "📄" },
+                { name: "玻璃瓶", emoji: "🍾" },
+                { name: "旧衣服", emoji: "👕" },
+                { name: "易拉罐", emoji: "🥫" },
+                { name: "旧手机", emoji: "📱" }
+            ],
+            "harmful": [
+                { name: "电池", emoji: "🔋" },
+                { name: "过期药品", emoji: "💊" },
+                { name: "灯泡", emoji: "💡" },
+                { name: "油漆桶", emoji: "🎨" },
+                { name: "杀虫剂", emoji: "🪳" },
+                { name: "温度计", emoji: "🌡️" }
+            ],
+            "wet": [
+                { name: "果皮", emoji: "🍌" },
+                { name: "剩饭剩菜", emoji: "🍚" },
+                { name: "茶叶渣", emoji: "🍃" },
+                { name: "花卉", emoji: "💐" },
+                { name: "菜叶", emoji: "🥬" },
+                { name: "咖啡渣", emoji: "☕" }
+            ],
+            "dry": [
+                { name: "奶茶杯", emoji: "🥤" },
+                { name: "尿布", emoji: "🧷" },
+                { name: "烟头", emoji: "🚬" },
+                { name: "餐巾纸", emoji: "🧻" },
+                { name: "一次性餐具", emoji: "🥢" },
+                { name: "大骨头", emoji: "🦴" }
+            ]
+        };
+
+        // DOM元素
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const resultContent = document.getElementById('result-content');
+        const bins = document.querySelectorAll('.bin');
+
+        // 搜索功能
+        function searchItem() {
+            const input = searchInput.value.trim();
+
+            if (!input) {
+                showEmptyState();
+                return;
+            }
+
+            const item = garbageDB[input];
+
+            if (item) {
+                showItemResult(input, item);
+            } else {
+                showNotFound(input);
+            }
+        }
+
+        // 显示物品搜索结果
+        function showItemResult(name, item) {
+            const typeMap = {
+                "recyclable": { name: "可回收物", color: "var(--recyclable)" },
+                "harmful": { name: "有害垃圾", color: "var(--harmful)" },
+                "wet": { name: "厨余垃圾", color: "var(--wet)" },
+                "dry": { name: "其他垃圾", color: "var(--dry)" }
+            };
+
+            const typeInfo = typeMap[item.type];
+
+            resultContent.innerHTML = `
+                        <div class="result-header">
+                            <div class="emoji">${item.emoji}</div>
+                            <h2>${name}</h2>
+                        </div>
+
+                        <div class="item-info">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 12px;">
+                                <div style="font-size: 2rem;">${item.emoji}</div>
+                                <div>
+                                    <h3 style="font-size: 1.5rem; margin-bottom: 5px;">${name}</h3>
+                                    <p style="font-size: 1.2rem;">分类: <strong style="color: ${typeInfo.color}">${typeInfo.name}</strong></p>
+                                </div>
+                            </div>
+
+                            <div class="tips">
+                                <h3>📌 投放指南</h3>
+                                <p>${item.tips}</p>
+                            </div>
+                        </div>
+
+                        <div class="similar-section" style="margin-top: 30px;">
+                            <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--primary);">同类垃圾示例：</h3>
+                            <div class="item-list">
+                                ${categoryExamples[item.type].map(example => `
+                                    <div class="item-card ${item.type}" onclick="searchItemByName('${example.name}')">
+                                        <div class="item-emoji">${example.emoji}</div>
+                                        <div class="item-name">${example.name}</div>
+                                        <div class="item-type">${typeInfo.name}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+        }
+
+        // 显示分类示例
+        function showCategoryExamples(type) {
+            const typeMap = {
+                "recyclable": { name: "可回收物", emoji: "♻️", color: "var(--recyclable)" },
+                "harmful": { name: "有害垃圾", emoji: "☣️", color: "var(--harmful)" },
+                "wet": { name: "厨余垃圾", emoji: "🍌", color: "var(--wet)" },
+                "dry": { name: "其他垃圾", emoji: "🗑️", color: "var(--dry)" }
+            };
+
+            const typeInfo = typeMap[type];
+            const examples = categoryExamples[type];
+
+            resultContent.innerHTML = `
+                        <div class="result-header">
+                            <div class="emoji">${typeInfo.emoji}</div>
+                            <h2>${typeInfo.name}</h2>
+                        </div>
+
+                        <div class="type-description" style="margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 12px; border-left: 4px solid ${typeInfo.color}">
+                            <h3 style="margin-bottom: 10px; color: ${typeInfo.color}">${typeInfo.name}定义</h3>
+                            <p>${getTypeDescription(type)}</p>
+                        </div>
+
+                        <div class="item-list">
+                            ${examples.map(item => `
+                                <div class="item-card ${type}" onclick="searchItemByName('${item.name}')">
+                                    <div class="item-emoji">${item.emoji}</div>
+                                    <div class="item-name">${item.name}</div>
+                                    <div class="item-type">${typeInfo.name}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="tips">
+                            <h3>📌 ${typeInfo.name}投放注意事项</h3>
+                            <p>${getTypeTips(type)}</p>
+                        </div>
+                    `;
+        }
+
+        // 获取分类描述
+        function getTypeDescription(type) {
+            const descriptions = {
+                "recyclable": "适宜回收利用的生活废弃物，主要包括废纸、塑料、玻璃、金属和布料五大类。",
+                "harmful": "对人体健康或自然环境造成直接或潜在危害的生活废弃物，需要特殊安全处理。",
+                "wet": "易腐的生物质生活废弃物，包括食材废料、剩菜剩饭、过期食品、瓜皮果核等。",
+                "dry": "除可回收物、有害垃圾、厨余垃圾以外的其他生活废弃物，难以回收的废弃物。"
+            };
+            return descriptions[type] || "";
+        }
+
+        // 获取分类提示
+        function getTypeTips(type) {
+            const tips = {
+                "recyclable": "投放前清空内容物，尽量保持清洁干燥；轻投轻放；立体包装物压扁投放；有尖锐边角的包裹后投放。",
+                "harmful": "投放时轻放；易破损的连带包装或包裹后投放；易挥发的密封后投放；杀虫剂等压力罐装容器排空后投放。",
+                "wet": "纯流质的食物垃圾如牛奶等直接倒进下水道；有包装的湿垃圾应去除包装后投放；投放时避免混入塑料袋、餐巾纸等杂质。",
+                "dry": "尽量沥干水分；难以辨识类别的生活垃圾投入干垃圾桶；投放时避免混入可回收物和有害垃圾。"
+            };
+            return tips[type] || "";
+        }
+
+        // 显示未找到结果
+        function showNotFound(input) {
+            resultContent.innerHTML = `
+                        <div class="result-header">
+                            <div class="emoji">🤔</div>
+                            <h2>未找到 "${input}"</h2>
+                        </div>
+
+                        <div class="empty-state">
+                            <div class="emoji">🔍</div>
+                            <p>抱歉，没有找到与"${input}"相关的垃圾分类信息</p>
+                            <p style="margin-top: 15px;">尝试搜索：<span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('塑料瓶')">塑料瓶</span>、<span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('电池')">电池</span>、<span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('果皮')">果皮</span> 或 <span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('奶茶杯')">奶茶杯</span></p>
+                        </div>
+                    `;
+        }
+
+        // 显示空状态
+        function showEmptyState() {
+            resultContent.innerHTML = `
+                        <div class="empty-state">
+                            <div class="emoji">🔍</div>
+                            <p>在搜索框中输入垃圾名称或点击上方分类垃圾桶查看详细信息</p>
+                            <p style="margin-top: 20px;">尝试搜索：<span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('塑料瓶')">塑料瓶</span>、<span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('电池')">电池</span>、<span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('果皮')">果皮</span> 或 <span style="color: var(--primary); cursor: pointer;" onclick="searchItemByName('奶茶杯')">奶茶杯</span></p>
+                        </div>
+                    `;
+        }
+
+        // 通过名称搜索物品
+        function searchItemByName(name) {
+            searchInput.value = name;
+            searchItem();
+        }
+
+        // 事件监听
+        searchButton.addEventListener('click', searchItem);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchItem();
+        });
+
+        bins.forEach(bin => {
+            bin.addEventListener('click', () => {
+                const type = bin.getAttribute('data-type');
+                showCategoryExamples(type);
+            });
+        });
+    </script>
+
+    <!-- 切换网页按钮 -->
+    <button class="switch-btn" onclick="switchPage()">返回</button>
+
+    <script>
+        function switchPage() {
+            // 替换为您要切换的目标网页URL，例如首页
+            window.location.href = "index.html";
+        }
+    </script>
+
+</body>
+</html>

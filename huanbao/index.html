@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>声波光合森林 - 环保互动网页</title>
+    <style>
+
+        body {
+            margin: 0;
+            padding-bottom: 80px; /* 为底部按钮预留空间 */
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* 底部导航容器 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        /* 按钮样式 */
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            width: 80px;
+            height: 80px;
+        }
+
+            /* 图标样式 */
+            .nav-btn i {
+                font-size: 24px;
+                margin-bottom: 8px;
+                transition: transform 0.3s;
+            }
+
+            /* 悬停效果 */
+            .nav-btn:hover {
+                background: #f0f5ff;
+                transform: translateY(-5px);
+            }
+
+                .nav-btn:hover i {
+                    transform: scale(1.2);
+                }
+
+            /* 活动状态 */
+            .nav-btn.active {
+                color: #1e88e5;
+                background: #e3f2fd;
+            }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .bottom-nav {
+                padding: 10px 0;
+            }
+
+            .nav-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 12px;
+            }
+
+                .nav-btn i {
+                    font-size: 20px;
+                }
+        }
+
+
+        /* 核心容器（参考网页2/3/5） */
+        .light-container {
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            filter: blur(2px) contrast(150%);
+            mix-blend-mode: screen;
+        }
+
+        /* 声波光效（整合网页1/3/5） */
+        .sonic-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient( circle at 50% 50%, hsla(120, 100%, 70%, 0.5) 20%, /* 浅绿核心 */
+            hsla(60, 100%, 70%, 0.3) 60%, /* 浅黄光晕 */
+            transparent 80% );
+            animation: wave-pulse 10s infinite;
+        }
+
+        /* 森林背景层（参考网页6/7） */
+        .forest-layer {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            background: linear-gradient( 45deg, rgba(34,139,34,0.1) 0%, rgba(107,142,35,0.05) 50%, transparent 100% );
+            mask-image: repeating-linear-gradient( 0deg, transparent 0%, #fff 5%, transparent 10% );
+        }
+
+
+
+        /* 动态光束（参考网页6/9） */
+        .sonic-wave::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            background: repeating-radial-gradient( circle, hsla(60,100%,80%,0.2) 0%, transparent 15% );
+            animation: beam-rotate 8s linear infinite;
+        }
+
+        @keyframes beam-rotate {
+            from {
+                transform: translate(-50%,-50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%,-50%) rotate(360deg);
+            }
+        }
+
+
+        /* 节日提示面板（左下角定位） */
+        #ecoDayPanel {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 18px;
+            max-width: 300px;
+            z-index: 9999;
+        }
+
+        .festival-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+        }
+
+        /* 节日信息动态展示 */
+        .festival-info {
+            display: none;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+            margin-top: 12px;
+        }
+
+        #ecoDayPanel:hover .festival-info {
+            display: block;
+        }
+
+        /* 音频控制面板样式（网页3/网页7优化版） */
+        #audioPlayer {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 15px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+            #audioPlayer:hover {
+                transform: translateY(-5px);
+            }
+
+        /* 播放按钮动画（网页6优化） */
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24"><path fill="%234CAF50" d="M8 5v14l11-7z"/></svg>') no-repeat center;
+            background-size: 60%;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+            .play-btn.paused {
+                background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24"><path fill="%23F44336" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>');
+            }
+
+        /* 进度条样式（网页8扩展） */
+        .progress-bar {
+            width: 120px;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.1s linear;
+        }
+
+        /* 积分显示区域 */
+        #userPanel {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 任务列表区域 */
+        #taskBoard {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 300px;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .task-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 森林绿色调定义 */
+        :root {
+            --forest-green: #2E5E4A;
+            --leaf-green: #87C29A;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--forest-green) 30%, #1A3C2E);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* 虚拟树苗样式 */
+        .tree-plot {
+            width: 400px;
+            height: 600px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><path d="M50 5 L30 140 L70 140 Z" fill="%2387C29A"/><circle cx="50" cy="30" r="25" fill="%234CAF50"/></svg>');
+        }
+
+        /* 生长动画 */
+        @keyframes grow {
+            0% {
+                transform: scale(0.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .tree-plot:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px var(--leaf-green));
+        }
+
+        /* 提示框样式 */
+        .tip-card {
+            position: fixed;
+            top: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: slideIn 3s ease-out;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- 虚拟树苗容器 -->
+    <div class="tree-garden">
+        <div class="tree-plot" onclick="showTip()"></div>
+    </div>
+
+
+    <script>
+        // 环保小贴士库
+        const tips = [
+            "每节约1度电=减排0.997kg二氧化碳🌍",
+            "每周素食1天可减少73%碳足迹🥦",
+            "使用可重复购物袋每年减少1000个塑料袋🛍️",
+            "空调温度每调高1℃可省电7-10%❄️",
+            "每人每天少开车1公里=减少0.5kg二氧化碳🚶‍♂️",
+            "回收一吨纸可节省17棵树🌳",
+            "使用节能灯泡每年可减少100kg二氧化碳💡",
+            "每人每天少用一次塑料瓶=减少365个塑料瓶🚫",
+            "双面打印纸张=省50%林木消耗📄",
+            "手机充满拔插头=年省20度待机电⚡",
+            "旧衣改造=减少3kg碳排放/件👖",
+            "厨余堆肥=年减200kg甲烷排放🍃",
+            "公交替代自驾10公里=减排2.4kg二氧化碳🚌",
+            "竹牙刷替代塑料=年减180g白色污染🌿",
+            "外卖自备餐具=年省156个塑料餐盒🍴",
+            "1吨水循环利用=保护6m³森林资源💦",
+            "每节约1吨水=保护6立方米森林资源💧",  // 网页3提到水循环利用与森林保护关联 
+            "每周少用1次外卖餐盒=年减52个塑料污染🍱",  // 网页2/5提倡自备餐具替代一次性用品 
+            "空调温度26℃以上=节电20%以上❄️",  // 网页1/3均提出空调温度调节对能耗影响 
+            "纸张双面打印=每箱纸挽救0.5棵树📄",  // 网页1/4强调双面用纸与林木消耗关系 
+            "手机充满即拔插头=年省待机电15度⚡",  // 网页1/3量化待机耗电数据 
+            "骑自行车10公里=减排2.4kg二氧化碳🚲",  // 网页3/5的交通减排数据支撑 
+            "厨余垃圾堆肥=年减甲烷排放200kg🍃",  // 网页3/7提到厨余处理与温室气体关联 
+            "LED灯替代白炽灯=节能80%💡",  // 网页1/3的灯具能耗对比 
+            "旧衣改造=每件减少3kg碳排放👖",  // 网页3/8的…
+            "干电池摩擦复活=减少50%电池浪费🔋",  // 网页7提到干电池短暂复活技巧
+            "少喝1瓶啤酒=年减26万吨二氧化碳🍺",  // 网页7量化饮酒与碳排放关联
+            "智能插座远程断电=年省待机电15%🔌",  // 网页3建议智能设备控制待机能耗
+            "旧毛巾改造地毯=减少3kg纺织垃圾🧶",  // 网页3提倡旧物DIY再利用
+            "练习本装订再利用=每本节省10张新纸📒",  // 网页6提出纸张循环方案
+            "无磷洗衣粉=年保护1吨水源💧",  // 网页1强调洗涤剂对水体影响
+            "公共场合不吸烟=减少PM2.5排放🚭",  // 网页4呼吁控烟改善空气质量
+            "电视关闭半小时=全国日省70万度电📺",  // 网页7统计集体节电效应
+            "加入共享汽车=年减200kg碳排放🚗",  // 网页5推广共享经济模式
+            "购买二手书籍=每本减少0.8kg碳📚",  // 网页2/3量化二手物品环保价值
+            "简化房屋装修=降低30%建材消耗🏠",  // 网页1建议减少装修资源浪费
+            "体重指数达标=人均年减碳20kg⚖️",  // 网页7揭示肥胖与碳排放关系
+            "屋顶种植绿萝=10㎡年固碳50kg🌱",  // 网页3量化绿植固碳能力
+            "雨水收集浇花=年节水5吨💦",  // 网页3建议水资源循环利用
+            "电视亮度调中=每台年省电5.5度🖥️",  // 网页7提供屏幕亮度调节技巧
+            "拒绝过度包装=每次购物减塑80%🎁",  // 网页1/6反对包装浪费
+            "草稿纸写满再用=每张节约0.01㎡森林🌲",  // 网页6细化纸张节约指标
+            "洗菜用盆接水=每次节水3升🥬",  // 网页4提出厨房节水方法
+            "支持再生纸=每吨挽救17棵树📜",  // 网页1/6对比再生纸环保效益
+            "废旧玻璃瓶改造=年减1.2吨矿石消耗🫙",  // 网页3量化玻璃回收资源价值
+            "安装节水型淋浴头=每次洗澡省水30%💧",  // 网页1提出用水设备升级方案 
+            "冰箱背部每月清洁=年省电15%🧊",  // 网页2量化设备维护节能效果 
+            "智能插座远程断电=减少待机能耗15%🔌",  // 网页1科技设备应用建议 
+            "轮胎改造花盆=年减少5kg塑料污染🛞",  // 网页3废旧物品创意利用案例 
+            "冬季调低暖气2℃=家庭年减排0.5吨碳🌡️",  // 网页4温度调节策略 
+            "用再生纸印刷=每吨挽救17棵树📜",  // 网页6纸张循环数据 
+            "厨余垃圾处理器=年减少甲烷排放150kg🍲",  // 网页3家庭垃圾处理技术 
+            "共享工具租赁=每件减少80%资源浪费🔧",  // 网页5共享经济模式推广 
+            "电子贺卡替代纸质=年保护0.5㎡森林🌲",  // 网页7无纸化行动量化 
+            "屋顶绿植10㎡=年固碳300kg🌿",  // 网页3绿化环境效益 
+            "洗衣液减半使用=年节水2吨+减排3kg🧺",  // 网页2洗涤剂优化建议 
+            "旧书捐赠平台=每本减少0.8kg碳排放📚",  // 网页5二手物品流通价值 
+            "手机亮度调中=年省电8度📱",  // 网页2设备参数调节技巧 
+            "竹纤维毛巾替代=年减少180g微塑料🧻",  // 网页3纺织品环保替代方案 
+            "洗澡时间缩短3分钟=年节水1.8吨🚿",  // 网页1用水行为优化 
+            "玻璃瓶循环使用=每次减少50g碳排放🫙",  // 网页3容器重复利用效益 
+            "无磷洗衣粉=年保护1吨水源💦",  // 网页2化学品选择原则 
+            "骑行5公里通勤=年减排二氧化碳240kg🚴",  // 网页5绿色出行数据 
+            "电子书替代纸质=每本节省0.02㎡森林📖",  // 网页6数字化阅读优势 
+            "阳台种植香草=年吸收二氧化碳20kg🌱",  // 网页3微型绿化固碳效应3
+            "淋浴时间缩短3分钟=每次节水9升🚿",
+            "燃气灶加防风罩=节气量提升20%🔥",
+            "电风扇替代空调=每小时省电0.8度🌀",
+            "冰箱除霜每月=冷冻效率提升30%🧊",
+            "智能灌溉系统=农田节水40%💧",
+            "旧牛仔裤改背包=减少纺织垃圾2kg👖",
+            "玻璃瓶存储食材=年替代100个塑料袋🫙",
+            "咖啡渣除异味=减少化学清新剂使用量90%☕",
+            "快递箱改造收纳盒=年省包装费50元📦",
+            "过期食用油制肥皂=年减化学污染3kg🧼",
+            "拼车出行=每趟减少40%碳排放🚗",
+            "租用婚纱礼服=比购买减排60%👰",
+            "选购竹纤维餐具=年减微塑料180g🎋",
+            "购买散装食品=减少包装垃圾70%🛍️",
+            "二手平台交易=每件商品减排0.8kg🔄",
+            "阳台种植薄荷=年吸收二氧化碳5kg🌱",
+            "自制鸟类喂食器=促进城市生态平衡🐦",
+            "举报非法排污=案件响应时间缩短至6小时🚨",
+            "认养社区树木=绿化覆盖率提升15%🌳",
+            "拒食鱼翅=保护海洋食物链完整性🦈",
+            "电子发票替代纸质=年省0.3㎡森林📄",
+            "关闭不必要APP后台=手机日省电10%📱",
+            "旧书籍捐赠学校=每本延长生命周期5年📚",
+            "洗衣冷水模式=年省电30度+减排12kg🧺",
+            "步行楼梯替代电梯=每层减碳0.01kg🏃",
+            "太阳能充电宝=年减一次性电池20节☀️",
+            "废弃轮胎改造花盆=减少橡胶污染5kg🛞",
+            "无磷洗衣粉=年保护淡水生物多样性🐟",
+            "缩短电脑待机时间=年省电50度💻",
+            "雨水收集系统=家庭年节水8吨🌧️",
+            "旧毛线编织坐垫=减少填埋垃圾1.5kg🧶",
+            "骑行5公里通勤=年减碳排182kg🚴",
+            "空调滤网每月清洗=制冷效率提升25%❄️",
+            "废弃木料DIY家具=减少木材消耗80%🪑",
+            "玻璃瓶回收再造=每吨节约石英砂1.2吨🔮",
+            "社区共享菜园=减少食物运输碳排30%🥬",
+            "棉布袋替代保鲜膜=年减塑料污染200g👜",
+            "电视音量调低=每小时省电0.05度📺",
+            "旧光盘改装饰品=减少光污染源10个💿",
+            "节水马桶=家庭年省水18吨🚽",
+            "自然光线办公=日减照明用电1.5度🪟",
+            "厨余喂养蚯蚓=年产出有机肥50kg🐛",
+            "废弃鱼骨制钙粉=替代工业添加剂100g🐟",
+            "旧窗帘改购物袋=年省新购塑料袋300个👜",
+            "微波炉替代烤箱=每次烹饪省电70%🔥",
+            "电子书阅读器=年省纸质书碳排8kg📖",
+            "废弃纸箱猫窝=减少宠物用品消费碳排3kg🐱",
+            "节能门窗改造=冬季室温提升3℃❄️",
+            "旧筷子制装饰架=延长木制品生命周期5年🥢",
+            "共享办公空间=人均年减碳排300kg🏢",
+            "茶叶渣吸附甲醛=替代化学除醛剂200ml🍵",
+            "废弃纽扣DIY画作=减少塑料垃圾回收压力🎨",
+            "旧网球制门挡=年减少橡胶垃圾1kg🎾",
+            "步行上学=学生年减碳排120kg👟",
+            "废弃易拉罐风铃=金属回收利用率提升50%🍺",
+            "棉麻衣物替代化纤=每件减碳排1.2kg👕",
+            "自制环保酵素=年减少化学清洁剂用量5L🍶",
+            "关闭游戏后台=手机日增续航2小时🎮",
+            "旧领带改发饰=减少纺织品填埋量0.5kg🎀",
+            "铁罐种植多肉=年替代塑料花盆30个🌵",
+            "竹制手机壳=年减塑料污染150g🎍",
+            "旧杂志剪贴画=延长纸张生命周期3倍✂️",
+        ];
+
+        // 显示随机提示
+        function showTip() {
+            const tipBox = document.createElement('div');
+            tipBox.className = 'tip-card';
+            tipBox.innerHTML = tips[Math.floor(Math.random() * tips.length)];
+            document.body.appendChild(tipBox);
+            setTimeout(() => tipBox.remove(), 3000);
+        }
+
+
+    </script>
+
+    <!-- 用户信息面板 -->
+    <div id="userPanel">
+        <div id="points">积分：0</div>
+        <div id="level">等级：新芽</div>
+    </div>
+
+    <!-- 任务面板 -->
+    <div id="taskBoard">
+        <h3>今日任务</h3>
+        <div id="taskList"></div>
+    </div>
+
+    <script>
+        // 浏览器指纹生成（基于网页6方案优化）
+        function generateBrowserID() {
+            let fingerprint = localStorage.getItem('browserID');
+            if (!fingerprint) {
+                const info = [
+                    navigator.userAgent,
+                    navigator.platform,
+                    screen.width + 'x' + screen.height,
+                    new Date().getTimezoneOffset()
+                ].join('|');
+
+                // 简易哈希算法（网页6方案改进）
+                let hash = 0;
+                for (let i = 0; i < info.length; i++) {
+                    hash = (hash << 5) - hash + info.charCodeAt(i);
+                    hash |= 0;
+                }
+                fingerprint = 'EP-' + Math.abs(hash).toString(36);
+                localStorage.setItem('browserID', fingerprint);
+            }
+            return fingerprint;
+        }
+
+        // 积分系统（网页4+网页5方案整合）
+        class PointSystem {
+            constructor() {
+                this.data = JSON.parse(localStorage.getItem(generateBrowserID())) || {
+                    points: 0,
+                    level: 1,
+                    tasks: []
+                };
+
+                // 初始化默认任务（网页5案例改进）
+                this.defaultTasks = [
+                    { id: 1, title: "每日签到", points: 10, done: false },
+                    { id: 2, title: "节约用水", points: 30, done: false },
+                    { id: 3, title: "垃圾分类", points: 20, done: false },
+                    { id: 4, title: "使用环保袋", points: 15, done: false },
+                    { id: 5, title: "骑行或步行上班", points: 25, done: false },
+                    { id: 6, title: "减少一次性用品使用", points: 20, done: false },
+                    { id: 7, title: "参与社区绿化活动", points: 50, done: false },
+                    { id: 8, title: "分享环保知识", points: 15, done: false }
+
+
+                ];
+            }
+
+            updateDisplay() {
+                document.getElementById('points').textContent = `积分：${this.data.points}`;
+                document.getElementById('level').textContent = `等级：${this.calculateLevel()}`;
+                this.renderTasks();
+                localStorage.setItem(generateBrowserID(), JSON.stringify(this.data));
+            }
+
+            calculateLevel() {
+                return this.data.points < 100 ? '新芽' :
+                    this.data.points < 300 ? '绿枝' :
+                        this.data.points < 600 ? '大树' : '森林';
+            }
+
+            renderTasks() {
+                const container = document.getElementById('taskList');
+                container.innerHTML = '';
+
+                this.defaultTasks.forEach(task => {
+                    const div = document.createElement('div');
+                    div.className = 'task-item';
+                    div.innerHTML = `
+                                            <span>${task.title}</span>
+                                            <button ${task.done ? 'disabled' : ''}
+                                                    onclick="pointSystem.completeTask(${task.id})">
+                                                ${task.done ? '✓ 已完成' : '▶ 完成任务'}
+                                            </button>
+                                        `;
+                    container.appendChild(div);
+                });
+            }
+
+            completeTask(taskId) {
+                const task = this.defaultTasks.find(t => t.id === taskId);
+                if (task && !task.done) {
+                    this.data.points += task.points;
+                    task.done = true;
+                    this.updateDisplay();
+                }
+            }
+        }
+
+        // 初始化系统
+        const pointSystem = new PointSystem();
+        pointSystem.updateDisplay();
+
+        // 每周一重置任务（网页5防作弊机制）
+        function resetWeeklyTasks() {
+            const lastReset = localStorage.getItem('lastReset') || 0;
+            if (Date.now() - lastReset > 604800000) { // 7天
+                pointSystem.defaultTasks.forEach(t => t.done = false);
+                localStorage.setItem('lastReset', Date.now());
+                pointSystem.updateDisplay();
+            }
+        }
+        resetWeeklyTasks();
+    </script>
+    <!-- 音频播放器（网页5+网页3整合） -->
+    <div id="audioPlayer">
+        <button class="play-btn" id="audioControl"></button>
+        <div class="progress-bar">
+            <div class="progress" id="audioProgress"></div>
+        </div>
+        <audio id="bgm" loop>
+            <source src="a\a.mp3">
+        </audio>
+    </div>
+
+    <script>
+        // 初始化音频对象（网页5/网页6方案）
+        const audio = document.getElementById('bgm');
+        const controlBtn = document.getElementById('audioControl');
+        const progressBar = document.getElementById('audioProgress');
+
+        // 播放控制（网页3交互优化）
+        controlBtn.addEventListener('click', () => {
+            audio.paused ? audio.play() : audio.pause();
+            controlBtn.classList.toggle('paused');
+        });
+
+        // 进度条更新（网页8扩展）
+        audio.addEventListener('timeupdate', () => {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+        });
+
+        // 触摸设备优化（网页3补充）
+        if ('ontouchstart' in window) {
+            audioPlayer.style.transform = 'scale(1.2)';
+        }
+
+        // 自动播放处理（网页7安全策略）
+        document.addEventListener('click', () => {
+            if (audio.paused) audio.play().catch(() => { });
+        }, { once: true });
+    </script>
+
+    <!-- 环保节日提示模块 -->
+    <div id="ecoDayPanel">
+        <div class="current-day">
+            <h3 id="festivalName">今日环保节日</h3>
+        </div>
+        <div class="festival-info">
+            <p id="festivalDesc"></p>
+            <small id="festivalSource"></small>
+        </div>
+    </div>
+
+    <script>
+        // 环保节日数据库（整合网页1-5数据）
+        const ecoFestivals = [
+            {
+                name: "世界地球日",
+                date: "04/22",
+                desc: "1970年由美国发起，旨在提高全球环境保护意识，倡导低碳生活。全球超过190个国家举办环保活动",
+            },
+            {
+                name: "世界水日",
+                date: "03/22",
+                desc: "1993年联合国设立，提醒关注水资源危机。中国同步开展'中国水周'宣传活动",
+            },
+            {
+                name: "世界环境日",
+                date: "06/05",
+                desc: "纪念1972年斯德哥尔摩人类环境会议，每年由不同国家主办主题活动",
+            },
+            {
+                name: "世界湿地日",
+                date: "02/02",
+                desc: "纪念《湿地公约》签署，中国已建立64处国际重要湿地",
+            },
+            {
+                name: "植树节",
+                date: "03/12",
+                desc: "植树节的设立源于孙中山先生对林业建设的重视。 民国四年（1915年），在孙中山的倡议下，北洋政府正式将清明节定为植树节。",
+            }
+        ];
+
+        // 日期检测与信息更新
+        function updateEcoDay() {
+            const today = new Date();
+            const currentDate = `${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+
+            const currentFestival = ecoFestivals.find(f => f.date === currentDate);
+            const panel = document.getElementById('ecoDayPanel');
+
+            if (currentFestival) {
+                document.getElementById('festivalName').textContent = currentFestival.name;
+                document.getElementById('festivalDesc').textContent = currentFestival.desc;
+                document.querySelector('.festival-icon').src = currentFestival.icon;
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // 每日自动更新
+        setInterval(updateEcoDay, 86400000); // 24小时更新
+        updateEcoDay(); // 初始化
+    </script>
+
+
+    <div class="light-container">
+        <div class="forest-layer"></div>
+        <div class="sonic-wave" style="animation-delay: 0s"></div>
+        <div class="sonic-wave" style="animation-delay: 30s"></div>
+        <div class="sonic-wave" style="animation-delay: 60s"></div>
+    </div>
+
+    <!-- 页面内容区域 -->
+
+
+    <!-- 底部导航按钮 -->
+    <div class="bottom-nav">
+        <a href="gc.html" class="nav-btn">
+            <i class="fas fa-recycle"></i>
+            <span>垃圾分类</span>
+        </a>
+        <a href="index.html" class="nav-btn active">
+            <i class="fas fa-home"></i>
+            <span>主页</span>
+        </a>
+        <a href="profile.html" class="nav-btn">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </a>
+    </div>
+
+</body>
+</html>
